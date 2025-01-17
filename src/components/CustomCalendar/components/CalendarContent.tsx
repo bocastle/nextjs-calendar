@@ -1,18 +1,15 @@
+import {
+  CalendarContext,
+  ICalendarContextParams,
+} from "@/context/CalendarContext";
+import { daysOfWeek } from "@/utils/constant";
 import dayjs from "dayjs";
-import React from "react";
-import { CalendarDay } from "../types";
+import React, { useContext } from "react";
 
-interface CalendarContentProps {
-  currentDate: dayjs.Dayjs;
-  daysOfWeek: string[];
-  days: CalendarDay[];
-}
-
-export const CalendarContent: React.FC<CalendarContentProps> = ({
-  currentDate,
-  daysOfWeek,
-  days,
-}) => {
+export const CalendarContent: React.FC = () => {
+  const CalendarCtx = useContext<ICalendarContextParams | undefined>(
+    CalendarContext
+  );
   return (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-700">
@@ -23,7 +20,7 @@ export const CalendarContent: React.FC<CalendarContentProps> = ({
         ))}
       </div>
       <div className="grid grid-cols-7 text-center">
-        {days.map(({ day, isCurrentMonth }, index) => {
+        {CalendarCtx?.days.map(({ day, isCurrentMonth }, index) => {
           const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
           const textColor =
             dayOfWeek === 0
@@ -45,7 +42,7 @@ export const CalendarContent: React.FC<CalendarContentProps> = ({
             >
               <span
                 className={`${
-                  currentDate.isSame(dayjs(), "month") &&
+                  CalendarCtx?.currentDate.isSame(dayjs(), "month") &&
                   day === dayjs().date() &&
                   "text-white rounded-full bg-blue-500 text-xs w-4 h-4 p-1"
                 } ${isCurrentMonth ? textColor : opacityTextColor}`}
