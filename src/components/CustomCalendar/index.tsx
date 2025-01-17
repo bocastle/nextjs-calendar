@@ -102,7 +102,7 @@ export default function CustomCalendar() {
                       day === dayjs().date()
                       ? "bg-green-200"
                       : "bg-white hover:bg-blue-100 cursor-pointer"
-                    : "text-gray-500"
+                    : ""
                 } ${textColor}`}
               >
                 {day}
