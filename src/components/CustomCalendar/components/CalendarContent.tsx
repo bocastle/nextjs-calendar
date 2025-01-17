@@ -13,11 +13,19 @@ export const CalendarContent: React.FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-700">
-        {daysOfWeek.map((day) => (
-          <div key={day} className="uppercase text-sm">
-            {day}
-          </div>
-        ))}
+        {daysOfWeek.map((day, index) => {
+          const textColor =
+            index === 0
+              ? "text-red-500"
+              : index === 6
+              ? "text-blue-500"
+              : "text-black";
+          return (
+            <div key={day} className={`${textColor} text-sm`}>
+              {day}
+            </div>
+          );
+        })}
       </div>
       <div className="grid grid-cols-7 text-center">
         {CalendarCtx?.days.map(({ day, isCurrentMonth }, index) => {
