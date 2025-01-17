@@ -84,8 +84,7 @@ export default function CustomCalendar() {
           ))}
         </div>
         <div className="grid grid-cols-7 text-center">
-          {days.map(({ day }, index) => {
-            // isCurrentMonth false: 지난달,다음달 true:이번달
+          {days.map(({ day, isCurrentMonth }, index) => {
             const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
             const textColor =
               dayOfWeek === 0
@@ -93,17 +92,27 @@ export default function CustomCalendar() {
                 : dayOfWeek === 6
                 ? "text-blue-500"
                 : "text-black";
+            const opacityTextColor =
+              dayOfWeek === 0
+                ? "text-red-500/40"
+                : dayOfWeek === 6
+                ? "text-blue-500/40"
+                : "text-black/40";
 
             return (
               <div
                 key={index}
-                className={`border-t h-28 ${
-                  currentDate.isSame(dayjs(), "month") && day === dayjs().date()
-                    ? "bg-green-200"
-                    : "bg-white hover:bg-blue-100 cursor-pointer"
-                } ${textColor}`}
+                className={`pt-1 border-t h-28 bg-white hover:bg-blue-100 cursor-pointer`}
               >
-                {day}
+                <span
+                  className={`${
+                    currentDate.isSame(dayjs(), "month") &&
+                    day === dayjs().date() &&
+                    "text-white rounded-full bg-blue-500 text-xs w-4 h-4 p-1"
+                  } ${isCurrentMonth ? textColor : opacityTextColor}`}
+                >
+                  {day}
+                </span>
               </div>
             );
           })}
