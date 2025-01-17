@@ -1,8 +1,9 @@
 "use client";
 
+import { CalendarGenerator } from "@/utils/CalendarGenerator";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa"; // 아이콘 추가
 import { CalendarDay } from "./types";
 
@@ -14,49 +15,43 @@ export default function CustomCalendar() {
   const [currentDate, setCurrentDate] = useState(dayjs()); // dayjs 객체 사용
   const [days, setDays] = useState<CalendarDay[]>([]);
 
+  const calendarGenerator = useMemo(
+    () => new CalendarGenerator(currentDate),
+    [currentDate]
+  );
+
   useEffect(() => {
-    generateCalendar(currentDate);
-  }, [currentDate]);
-
-  const generateCalendar = (date: dayjs.Dayjs) => {
-    const firstDayOfMonth = date.startOf("month").day();
-    const daysInMonth = date.daysInMonth();
-
-    const lastMonthDays = Array.from({ length: firstDayOfMonth }, (_, i) => ({
-      day: date.subtract(1, "month").daysInMonth() - firstDayOfMonth + i + 1,
-      isCurrentMonth: false,
-    }));
-
-    const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => ({
-      day: i + 1,
-      isCurrentMonth: true,
-    }));
-
-    const nextMonthDaysCount =
-      42 - (lastMonthDays.length + currentMonthDays.length); // 6행 7열 기준
-    const nextMonthDays = Array.from(
-      { length: nextMonthDaysCount },
-      (_, i) => ({ day: i + 1, isCurrentMonth: false })
-    );
-
-    setDays([...lastMonthDays, ...currentMonthDays, ...nextMonthDays]);
-  };
+    setDays(calendarGenerator.generateCalendar());
+  }, [calendarGenerator]);
 
   const handlePrevMonth = () => {
-    setCurrentDate(currentDate.subtract(1, "month"));
+    const newDate = currentDate.subtract(1, "month");
+    setCurrentDate(newDate);
+    calendarGenerator.setDate(newDate);
+    setDays(calendarGenerator.generateCalendar());
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(currentDate.add(1, "month"));
+    const newDate = currentDate.add(1, "month");
+    setCurrentDate(newDate);
+    calendarGenerator.setDate(newDate);
+    setDays(calendarGenerator.generateCalendar());
   };
-  const handleToday = () => setCurrentDate(dayjs()); // 오늘 날짜로 이동
+  // 오늘 날짜로 이동
+  const handleToday = () => {
+    const newDate = dayjs();
+    setCurrentDate(newDate);
+    calendarGenerator.setDate(newDate);
+    setDays(calendarGenerator.generateCalendar());
+  };
 
   return (
-    <div className="w-full p-4">
+    <div className="flex flex-col w-full p-4 gap-5">
       <header className="flex items-center gap-5">
         <h2 className="text-black text-xl font-bold">
-          {currentDate.format("YYYY.MM")} {/* 월과 연도 포맷 */}
+          {currentDate.format("YYYY.MM")} {/* 연도과 월 포맷 */}
         </h2>
+
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrevMonth}
@@ -80,28 +75,41 @@ export default function CustomCalendar() {
           </button>
         </div>
       </header>
-      <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-700">
-        {daysOfWeek.map((day) => (
-          <div key={day} className="uppercase text-sm">
-            {day}
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 gap-2 mt-2">
-        {days.map(({ day, isCurrentMonth }, index) => (
-          <div
-            key={index}
-            className={`p-4 border ${
-              isCurrentMonth
-                ? currentDate.isSame(dayjs(), "month") && day === dayjs().date()
-                  ? "bg-green-200"
-                  : "bg-white hover:bg-blue-100 cursor-pointer"
-                : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            {day}
-          </div>
-        ))}
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-700">
+          {daysOfWeek.map((day) => (
+            <div key={day} className="uppercase text-sm">
+              {day}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {days.map(({ day, isCurrentMonth }, index) => {
+            const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
+            const textColor =
+              dayOfWeek === 0
+                ? "text-red-500"
+                : dayOfWeek === 6
+                ? "text-blue-500"
+                : "text-black";
+
+            return (
+              <div
+                key={index}
+                className={`p-4 border ${
+                  isCurrentMonth
+                    ? currentDate.isSame(dayjs(), "month") &&
+                      day === dayjs().date()
+                      ? "bg-green-200"
+                      : "bg-white hover:bg-blue-100 cursor-pointer"
+                    : "text-gray-500"
+                } ${textColor}`}
+              >
+                {day}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
