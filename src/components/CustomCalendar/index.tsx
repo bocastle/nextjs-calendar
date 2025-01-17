@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarGenerator } from "@/utils/CalendarGenerator";
+import { daysOfWeek } from "@/utils/constant";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import { useEffect, useMemo, useState } from "react";
@@ -8,8 +9,6 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"; // 아이콘 추
 import { CalendarDay } from "./types";
 
 dayjs.locale("ko"); // 로케일 설정
-
-const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"]; // 한국어 요일
 
 export default function CustomCalendar() {
   const [currentDate, setCurrentDate] = useState(dayjs()); // dayjs 객체 사용
