@@ -83,8 +83,9 @@ export default function CustomCalendar() {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-2">
-          {days.map(({ day, isCurrentMonth }, index) => {
+        <div className="grid grid-cols-7 text-center">
+          {days.map(({ day }, index) => {
+            // isCurrentMonth false: 지난달,다음달 true:이번달
             const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
             const textColor =
               dayOfWeek === 0
@@ -96,13 +97,10 @@ export default function CustomCalendar() {
             return (
               <div
                 key={index}
-                className={`p-4 border ${
-                  isCurrentMonth
-                    ? currentDate.isSame(dayjs(), "month") &&
-                      day === dayjs().date()
-                      ? "bg-green-200"
-                      : "bg-white hover:bg-blue-100 cursor-pointer"
-                    : ""
+                className={`border-t h-28 ${
+                  currentDate.isSame(dayjs(), "month") && day === dayjs().date()
+                    ? "bg-green-200"
+                    : "bg-white hover:bg-blue-100 cursor-pointer"
                 } ${textColor}`}
               >
                 {day}
