@@ -1,9 +1,5 @@
+import { CalendarDay } from "@/components/CustomCalendar/types";
 import { Dayjs } from "dayjs";
-
-export type CalendarDay = {
-  day: number;
-  isCurrentMonth: boolean;
-};
 
 export class CalendarGenerator {
   private date: Dayjs;
