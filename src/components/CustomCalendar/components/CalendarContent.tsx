@@ -28,7 +28,7 @@ export const CalendarContent: React.FC = () => {
         })}
       </div>
       <div className="grid grid-cols-7 text-center">
-        {CalendarCtx?.days.map(({ day, isCurrentMonth }, index) => {
+        {CalendarCtx?.days.map(({ day, schedules, isCurrentMonth }, index) => {
           const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
           const textColor =
             dayOfWeek === 0
@@ -42,7 +42,7 @@ export const CalendarContent: React.FC = () => {
               : dayOfWeek === 6
               ? "text-blue-500/40"
               : "text-black/40";
-
+          //   console.log("schedules", schedules);
           return (
             <div
               key={index}
@@ -57,6 +57,13 @@ export const CalendarContent: React.FC = () => {
               >
                 {day}
               </span>
+              {schedules.map((item, index) => {
+                return (
+                  <ul key={index} className="text-black text-start">
+                    {item.time} - {item.description}
+                  </ul>
+                );
+              })}
             </div>
           );
         })}
