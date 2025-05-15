@@ -6,6 +6,13 @@ import { daysOfWeek } from "@/utils/constant";
 import dayjs from "dayjs";
 import React, { useContext } from "react";
 
+const getTextColor = (dayIndex: number, opacity: boolean = false) => {
+  const opacitySuffix = opacity ? "/40" : "";
+  if (dayIndex === 0) return `text-red-500${opacitySuffix}`;
+  if (dayIndex === 6) return `text-blue-500${opacitySuffix}`;
+  return `text-black${opacitySuffix}`;
+};
+
 export const CalendarContent: React.FC = () => {
   const CalendarCtx = useContext<ICalendarContextParams | undefined>(
     CalendarContext
@@ -13,35 +20,17 @@ export const CalendarContent: React.FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-700">
-        {daysOfWeek.map((day, index) => {
-          const textColor =
-            index === 0
-              ? "text-red-500"
-              : index === 6
-              ? "text-blue-500"
-              : "text-black";
-          return (
-            <div key={day} className={`${textColor} text-sm`}>
-              {day}
-            </div>
-          );
-        })}
+        {daysOfWeek.map((day, index) => (
+          <div key={day} className={`${getTextColor(index)} text-sm`}>
+            {day}
+          </div>
+        ))}
       </div>
       <div className="grid grid-cols-7 text-center">
         {CalendarCtx?.days.map(({ day, schedules, isCurrentMonth }, index) => {
           const dayOfWeek = index % 7; // 날짜 셀의 요일 계산
-          const textColor =
-            dayOfWeek === 0
-              ? "text-red-500"
-              : dayOfWeek === 6
-              ? "text-blue-500"
-              : "text-black";
-          const opacityTextColor =
-            dayOfWeek === 0
-              ? "text-red-500/40"
-              : dayOfWeek === 6
-              ? "text-blue-500/40"
-              : "text-black/40";
+          const textColor = getTextColor(dayOfWeek);
+          const opacityTextColor = getTextColor(dayOfWeek, true);
           //   console.log("schedules", schedules);
           return (
             <div
